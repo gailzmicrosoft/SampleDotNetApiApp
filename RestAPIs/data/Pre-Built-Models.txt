@@ -1,0 +1,133 @@
+[
+
+ {
+
+  "modelId": "prebuilt-businessCard",
+
+  "description": "Extract key information from business cards.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-contract",
+
+  "description": "Extract key information from legal contracts.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-document",
+
+  "description": "Extract text, layout, entities, and general key-value pairs from documents.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-healthInsuranceCard.us",
+
+  "description": "Extract key information from US health insurance cards.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-idDocument",
+
+  "description": "Extract key information from passports and ID cards.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-invoice",
+
+  "description": "Extract key information from invoices.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-layout",
+
+  "description": "Extract text and layout information from documents.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-read",
+
+  "description": "Extract text from documents.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-receipt",
+
+  "description": "Extract key information from receipts.",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-tax.us.1098",
+
+  "description": "Extract key information from United States Internal Revenue Service Form 1098 (2021-current).",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-tax.us.1098E",
+
+  "description": "Extract key information from United States Internal Revenue Service Form 1098-E (2021-current).",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-tax.us.1098T",
+
+  "description": "Extract key information from United States Internal Revenue Service Form 1098-T (2021-current).",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ },
+
+ {
+
+  "modelId": "prebuilt-tax.us.w2",
+
+  "description": "Extract key information from IRS US W2 tax forms (year 2018-current).",
+
+  "createdOn": "2023-07-31T00:00:00+00:00"
+
+ }
+
+]

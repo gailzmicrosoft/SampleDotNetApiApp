@@ -1,0 +1,160 @@
+{
+  "firstName": "John",
+  "middleName": "Web-1",
+  "lastName": "Smith",
+  "ssn": "000-00-0000",
+  "doB": "1975-02-05",
+  "currentCashAsset": 2000000,
+  "annualIncome": 150000,
+  "isMarried": true,
+  "gender": "Male",
+  "employer": "Self-Employed",
+  "yearsEmployedByCurrentEmployer": 20,
+  "phoneNumber": "111-222-3333",
+  "address": "1000 Private Drive, Washington DC",
+  "email": "j.w.smith@email.com",
+  "purchasePrice": 800000,
+  "downPayment": 200000,
+  "loanCost": 15000,
+  "loanTermInYears": 15,
+  "interestRate": 6.5
+}
+
+
+{
+  "firstName": "Jane",
+  "middleName": "Web-3",
+  "lastName": "Doe",
+  "ssn": "000-00-0000",
+  "doB": "1965-02-01",
+  "currentCashAsset": 3000000,
+  "annualIncome": 100000,
+  "isMarried": true,
+  "gender": "Female",
+  "employer": "Self-Employed",
+  "yearsEmployedByCurrentEmployer": 30,
+  "phoneNumber": "111-222-3333",
+  "address": "1000 Private Drive, Washington DC",
+  "email": "jane.doe@email.com",
+  "purchasePrice": 600000,
+  "downPayment": 100000,
+  "loanCost": 25000,
+  "loanTermInYears": 15,
+  "interestRate": 6.5
+}
+
+{
+  "firstName": "Jane",
+  "middleName": "Web-3",
+  "lastName": "Doe",
+  "ssn": "000-00-0000",
+  "doB": "1965-02-01",
+  "currentCashAsset": 3000000,
+  "annualIncome": 100000,
+  "isMarried": true,
+  "gender": "Female",
+  "employer": "Self-Employed",
+  "yearsEmployedByCurrentEmployer": 30,
+  "phoneNumber": "111-222-3333",
+  "address": "1000 Private Drive, Washington DC",
+  "email": "jane.doe3@email.com",
+  "purchasePrice": 600000,
+  "downPayment": 100000,
+  "loanCost": 25000,
+  "loanTermInYears": 15,
+  "interestRate": 6.5
+}
+
+
+{
+  "firstName": "Mary",
+  "middleName": "Web4",
+  "lastName": "Doe",
+  "ssn": "000-00-0000",
+  "doB": "1935-02-01",
+  "currentCashAsset": 3000000,
+  "annualIncome": 100000,
+  "isMarried": true,
+  "gender": "Female",
+  "employer": "Self-Employed",
+  "yearsEmployedByCurrentEmployer": 30,
+  "phoneNumber": "111-222-3333",
+  "address": "2000 Private Drive, Washington DC",
+  "email": "mary.doe@email.com",
+  "purchasePrice": 500000,
+  "downPayment": 100000,
+  "loanCost": 15000,
+  "loanTermInYears": 15,
+  "interestRate": 6.5
+}
+
+{
+  "firstName": "Monika",
+  "middleName": "Web5",
+  "lastName": "Doe",
+  "ssn": "000-00-0000",
+  "doB": "1955-02-01",
+  "currentCashAsset": 3000000,
+  "annualIncome": 100000,
+  "isMarried": true,
+  "gender": "Female",
+  "employer": "Self-Employed",
+  "yearsEmployedByCurrentEmployer": 15,
+  "phoneNumber": "111-222-3333",
+  "address": "3000 Private Drive, Washington DC",
+  "email": "monika.doe@email.com",
+  "purchasePrice": 800000,
+  "downPayment": 100000,
+  "loanCost": 15000,
+  "loanTermInYears": 15,
+  "interestRate": 6.5
+}
+
+
+
+{
+  "firstName": "Mary",
+  "middleName": "Web6",
+  "lastName": "Smith",
+  "ssn": "000-00-0000",
+  "doB": "1956-02-01",
+  "currentCashAsset": 4000000,
+  "annualIncome": 100000,
+  "isMarried": false,
+  "gender": "Female",
+  "employer": "Self-Employed",
+  "yearsEmployedByCurrentEmployer": 25,
+  "phoneNumber": "111-222-3333",
+  "address": "3000 Private Drive, Washington DC",
+  "email": "marye.smith@email.com",
+  "purchasePrice": 800000,
+  "downPayment": 100000,
+  "loanCost": 15000,
+  "loanTermInYears": 30,
+  "interestRate": 6.5
+}
+
+
+{
+  "firstName": "Mark",
+  "middleName": "Web7",
+  "lastName": "Smith",
+  "ssn": "000-00-0000",
+  "doB": "1956-02-01",
+  "currentCashAsset": 4000000,
+  "annualIncome": 100000,
+  "isMarried": false,
+  "gender": "Female",
+  "employer": "Self-Employed",
+  "yearsEmployedByCurrentEmployer": 25,
+  "phoneNumber": "111-222-3333",
+  "address": "5000 Private Drive, Washington DC",
+  "email": "mark@email.com",
+  "purchasePrice": 800000,
+  "downPayment": 100000,
+  "loanCost": 15000,
+  "loanTermInYears": 30,
+  "interestRate": 6.5
+}
+
+

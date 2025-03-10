@@ -1,0 +1,346 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.33.93.31351",
+      "templateHash": "12523897938890236487"
+    }
+  },
+  "parameters": {
+    "resourcePrefixUser": {
+      "type": "string",
+      "defaultValue": "mrtg1",
+      "metadata": {
+        "description": "Prefix to use for all resources."
+      }
+    }
+  },
+  "variables": {
+    "trimmedResourcePrefixUser": "[if(greater(length(parameters('resourcePrefixUser')), 5), substring(parameters('resourcePrefixUser'), 0, 5), parameters('resourcePrefixUser'))]",
+    "uniString": "[toLower(substring(uniqueString(subscription().id, resourceGroup().id), 0, 5))]",
+    "resourcePrefix": "[format('{0}{1}', variables('trimmedResourcePrefixUser'), variables('uniString'))]",
+    "location": "[resourceGroup().location]",
+    "resourceGroupContributorRoleID": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+    "storageBlobDataContributorRoleID": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}storage', toLower(variables('resourcePrefix')))]",
+      "location": "[variables('location')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "Standard_LRS"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}', format('{0}storage', toLower(variables('resourcePrefix'))), 'default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', format('{0}storage', toLower(variables('resourcePrefix'))))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}/{2}', format('{0}storage', toLower(variables('resourcePrefix'))), 'default', 'mortgageapp')]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', format('{0}storage', toLower(variables('resourcePrefix'))), 'default')]"
+      ]
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2021-04-30",
+      "name": "[format('{0}FormRecognizer', variables('resourcePrefix'))]",
+      "location": "[variables('location')]",
+      "kind": "FormRecognizer",
+      "sku": {
+        "name": "S0"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2024-11-15",
+      "name": "[format('{0}cosmosdbaccount', toLower(variables('resourcePrefix')))]",
+      "location": "[variables('location')]",
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "locations": [
+          {
+            "locationName": "[variables('location')]"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2024-11-15",
+      "name": "[format('{0}/{1}', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))), 'LoanAppDatabase')]",
+      "properties": {
+        "resource": {
+          "id": "LoanAppDatabase"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))))]"
+      ]
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2024-11-15",
+      "name": "[format('{0}/{1}/{2}', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))), 'LoanAppDatabase', 'LoanAppDataContainer')]",
+      "properties": {
+        "resource": {
+          "id": "LoanAppDataContainer",
+          "partitionKey": {
+            "paths": [
+              "/LoanAppDataId"
+            ],
+            "kind": "Hash",
+            "version": 2
+          },
+          "uniqueKeyPolicy": {
+            "uniqueKeys": []
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))), 'LoanAppDatabase')]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}KeyVault', variables('resourcePrefix'))]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": []
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'azure-storage-account-name')]",
+      "properties": {
+        "value": "[format('{0}storage', toLower(variables('resourcePrefix')))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', format('{0}storage', toLower(variables('resourcePrefix'))))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'azure-storage-blob-container-name')]",
+      "properties": {
+        "value": "mortgageapp"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', format('{0}storage', toLower(variables('resourcePrefix'))), 'default', 'mortgageapp')]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'cosmos-db-endpoint')]",
+      "properties": {
+        "value": "[string(reference(resourceId('Microsoft.DocumentDB/databaseAccounts', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix')))), '2024-11-15').documentEndpoint)]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'cosmos-db-account-key')]",
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix')))), '2024-11-15').primaryMasterKey]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'cosmos-db-name')]",
+      "properties": {
+        "value": "LoanAppDatabase"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))), 'LoanAppDatabase')]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'cosmos-db-container-name')]",
+      "properties": {
+        "value": "LoanAppDataContainer"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers', format('{0}cosmosdbaccount', toLower(variables('resourcePrefix'))), 'LoanAppDatabase', 'LoanAppDataContainer')]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'form-recognizer-endpoint')]",
+      "properties": {
+        "value": "[string(reference(resourceId('Microsoft.CognitiveServices/accounts', format('{0}FormRecognizer', variables('resourcePrefix'))), '2021-04-30').endpoint)]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', format('{0}FormRecognizer', variables('resourcePrefix')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'form-recognizer-key')]",
+      "properties": {
+        "value": "[string(listKeys(resourceId('Microsoft.CognitiveServices/accounts', format('{0}FormRecognizer', variables('resourcePrefix'))), '2021-04-30').key1)]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.CognitiveServices/accounts', format('{0}FormRecognizer', variables('resourcePrefix')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'x-api-key')]",
+      "properties": {
+        "value": "AppConfigApiKey"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2024-04-01",
+      "name": "[format('{0}AppServicePlan', variables('resourcePrefix'))]",
+      "location": "[variables('location')]",
+      "kind": "linux",
+      "sku": {
+        "name": "P1v3",
+        "tier": "PremiumV3",
+        "size": "P1v3",
+        "family": "P",
+        "capacity": 1
+      },
+      "properties": {
+        "perSiteScaling": false,
+        "reserved": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2024-04-01",
+      "name": "[format('{0}AppService', variables('resourcePrefix'))]",
+      "location": "[variables('location')]",
+      "kind": "app",
+      "tags": {
+        "displayName": "Mortgage Advisor",
+        "environment": "test"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', format('{0}AppServicePlan', variables('resourcePrefix')))]",
+        "httpsOnly": true,
+        "endToEndEncryptionEnabled": false,
+        "siteConfig": {
+          "linuxFxVersion": "DOTNETCORE|8.0",
+          "appSettings": [
+            {
+              "name": "ENVIRONMENT",
+              "value": "Release"
+            },
+            {
+              "name": "KEY_VAULT_URI",
+              "value": "[reference(resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix'))), '2022-11-01').vaultUri]"
+            }
+          ],
+          "healthCheckPath": "/health"
+        }
+      },
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', format('{0}AppServicePlan', variables('resourcePrefix')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/accessPolicies",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', format('{0}KeyVault', variables('resourcePrefix')), 'add')]",
+      "properties": {
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix'))), '2024-04-01', 'full').identity.principalId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "list"
+              ]
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix')))]",
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}KeyVault', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix'))), 'Contributor')]",
+      "properties": {
+        "roleDefinitionId": "[variables('resourceGroupContributorRoleID')]",
+        "principalId": "[reference(resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix'))), '2024-04-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[guid(resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix'))), 'StorageBlobDataContributor')]",
+      "properties": {
+        "roleDefinitionId": "[variables('storageBlobDataContributorRoleID')]",
+        "principalId": "[reference(resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix'))), '2024-04-01', 'full').identity.principalId]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', format('{0}AppService', variables('resourcePrefix')))]"
+      ]
+    }
+  ]
+}

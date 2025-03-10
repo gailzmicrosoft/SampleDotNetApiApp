@@ -1,0 +1,22 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    },
+    "Console": {
+      "LogLevel": {
+        "Default": "Information"
+      }
+    },
+    "Debug": {
+      "LogLevel": {
+        "Default": "Information"
+      }
+    }
+  },
+  "KEY_VAULT_URI": "https://yourvault.vault.azure.net/",
+  "AllowedHosts": "*"
+}
+   
