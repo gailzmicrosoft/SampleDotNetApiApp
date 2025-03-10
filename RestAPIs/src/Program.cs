@@ -13,12 +13,12 @@ namespace RestAPIs
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            ConfigureConfiguration(builder);
-            ConfigureKeyVault(builder);
+            ConfigureConfiguration(builder); // Configure environment-specific settings
+            ConfigureKeyVault(builder);      // Configure Key Vault to retrieve secrets
             ConfigureServices(builder.Services, builder.Configuration);
 
             var app = builder.Build();
-            ConfigureMiddleware(app);
+            ConfigureMiddleware(app);       // Configure middleware
 
             app.Run();
         }
@@ -27,10 +27,11 @@ namespace RestAPIs
         {
             builder.Configuration.AddEnvironmentVariables();
 
-            var environment = builder.Configuration["ENVIRONMENT"] ?? "Release";
+            var environment = builder.Configuration["ENVIRONMENT"] ?? "Release"; // Get environment setting, default to "Release"
 
             if (environment.Equals("Development", StringComparison.OrdinalIgnoreCase))
             {
+                // Load environment-specific appsettings.json files
                 builder.Configuration
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{environment}.json", optional: false, reloadOnChange: true);
@@ -54,6 +55,7 @@ namespace RestAPIs
             var secretClient = new SecretClient(new Uri(keyVaultUri), new DefaultAzureCredential());
 
             // Add or substract secrets to configuration based on your own architecture
+            // List of secrets to retrieve from Key Vault (This must have been designed and created by deployment process)
             var secrets = new[]
             {
                 "azure-storage-account-name",
@@ -66,7 +68,7 @@ namespace RestAPIs
                 "cosmos-db-container-name",
                 "x-api-key"
             };
-
+            // Add secrets to configuration
             foreach (var secret in secrets)
             {
                 builder.Configuration[secret] = secretClient.GetSecret(secret).Value.Value;
@@ -79,6 +81,7 @@ namespace RestAPIs
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {
+                // Configure Swagger with API key security definition
                 c.AddSecurityDefinition("x-api-key", new OpenApiSecurityScheme
                 {
                     Description = "API Key needed to access the endpoints. x-api-key: Your_API_Key",
@@ -110,17 +113,17 @@ namespace RestAPIs
 
         private static void ConfigureMiddleware(WebApplication app)
         {
-            app.UseSwagger();
+            app.UseSwagger(); // Enable Swagger UI for API documentation
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestAPIs v1");
-                c.RoutePrefix = string.Empty;
+                c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
             });
 
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
-            app.UseMiddleware<ApiKeyMiddleware>();
-            app.MapControllers();
+            app.UseHttpsRedirection();             // Redirect HTTP to HTTPS
+            app.UseAuthorization();                // Enable authorization
+            app.UseMiddleware<ApiKeyMiddleware>(); // Use custom API key middleware
+            app.MapControllers();                  // Map controller routes
 
             if (app.Environment.IsDevelopment())
             {
@@ -128,7 +131,7 @@ namespace RestAPIs
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error"); // Use custom error handler in production
                 //app.UseHsts(); // Enforces the use of HTTPS by adding HSTS headers to responses, enhancing security.
             }
         }
