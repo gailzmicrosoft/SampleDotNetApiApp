@@ -15,7 +15,7 @@
 #how to run: 
 # cd Deployment 
 # .\build_zipfile.ps1
-
+.\
 # set up path
 $projectDir = "..\RestAPIs\src"
 $outputDir = "..\RestAPIs\deploy"
